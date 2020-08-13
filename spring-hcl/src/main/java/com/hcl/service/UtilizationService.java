@@ -64,11 +64,23 @@ public class UtilizationService {
 		return repo_Bill_split.FindRecords(startDate, endDate);
 	}
 	public Double sumutill(Utilization util) {
-		return util.getBench()+util.getDelivery_Support()+util.getEffective_Utilization()+util.getInternal_Projects_SUT()+util.getUnbilled_In_Projects();}
-	public Goals sumGoal(Goals ciscogoal,Double tot) {
-		Float temper=(float) 0.0;
-		DecimalFormat df=new DecimalFormat("#.##");
-		Goals ciscogoalcopy=ciscogoal;
+		Double tot=(double) 0;
+		if(util.getBench()!=null) {
+			tot=tot+util.getBench();
+		}
+		if(util.getDelivery_Support()!=null) {
+			tot=tot+util.getDelivery_Support();
+		}if(util.getEffective_Utilization()!=null) {
+			tot=tot+util.getEffective_Utilization();
+		}if(util.getInternal_Projects_SUT()!=null) {
+			tot=tot+util.getInternal_Projects_SUT();
+		}if(util.getUnbilled_In_Projects()!=null) {
+			tot=tot+util.getUnbilled_In_Projects();
+		}
+		
+		return tot;
+				}
+	public Goals sumGoal(Goals ciscogoalcopy,Double tot) {
 		Double goalTot=0.0;
 		if(ciscogoalcopy.getBench()!=null) {
 			goalTot=goalTot+ciscogoalcopy.getBench();
@@ -90,25 +102,27 @@ public class UtilizationService {
 			goalTot=goalTot+ciscogoalcopy.getUnbilledInProjects();
 			ciscogoalcopy.setUnbilledInProjects((ciscogoalcopy.getUnbilledInProjects()*tot)/100);
 			}
-//percentage cal
-		if(ciscogoalcopy.getBench()!=null) {
-			ciscogoalcopy.setBench(Double.valueOf(df.format((ciscogoalcopy.getBench()*100/goalTot))));
-		}
-		if(ciscogoalcopy.getDeliverySupport()!=null) {
-			ciscogoalcopy.setDeliverySupport(Double.valueOf(df.format((ciscogoalcopy.getDeliverySupport()*100/goalTot))));
-		}
-		if(ciscogoalcopy.getEffectiveUtil()!=null) {
-			ciscogoalcopy.setEffectiveUtil(Double.valueOf(df.format((ciscogoalcopy.getEffectiveUtil()*100/goalTot))));
-		}
-		if(ciscogoalcopy.getInternalProjects()!=null) {
-			ciscogoalcopy.setInternalProjects(Double.valueOf(df.format((ciscogoalcopy.getInternalProjects()*100/goalTot))));
-		} 
-		if(ciscogoalcopy.getUnbilledInProjects()!=null) {
-			ciscogoalcopy.setUnbilledInProjects(Double.valueOf(df.format((ciscogoalcopy.getUnbilledInProjects()*100/goalTot))));
-			}
-		return ciscogoalcopy;
+		return percentageCalculaterGoal(ciscogoalcopy,goalTot);
 	}
-	
+	public Goals percentageCalculaterGoal(Goals ciscogoalcopy,Double goalTot) {
+		DecimalFormat df=new DecimalFormat("#.##");
+	if(ciscogoalcopy.getBench()!=null) {
+		ciscogoalcopy.setBench(Double.valueOf(df.format((ciscogoalcopy.getBench()*100/goalTot))));
+	}
+	if(ciscogoalcopy.getDeliverySupport()!=null) {
+		ciscogoalcopy.setDeliverySupport(Double.valueOf(df.format((ciscogoalcopy.getDeliverySupport()*100/goalTot))));
+	}
+	if(ciscogoalcopy.getEffectiveUtil()!=null) {
+		ciscogoalcopy.setEffectiveUtil(Double.valueOf(df.format((ciscogoalcopy.getEffectiveUtil()*100/goalTot))));
+	}
+	if(ciscogoalcopy.getInternalProjects()!=null) {
+		ciscogoalcopy.setInternalProjects(Double.valueOf(df.format((ciscogoalcopy.getInternalProjects()*100/goalTot))));
+	} 
+	if(ciscogoalcopy.getUnbilledInProjects()!=null) {
+		ciscogoalcopy.setUnbilledInProjects(Double.valueOf(df.format((ciscogoalcopy.getUnbilledInProjects()*100/goalTot))));
+		}
+	return ciscogoalcopy;
+}
 	
 	public JSONObject duWise() throws JSONException {
 		Date maxDateInUtil=Date.valueOf(selectMaxDate("Utilization"));
